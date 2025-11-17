@@ -30,7 +30,7 @@ android {
 
     defaultConfig {
         applicationId = "com.thalesnishida.todo"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -54,6 +54,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "11"
+        freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     }
     buildFeatures {
         compose = true
@@ -78,7 +79,8 @@ dependencies {
     implementation(libs.room.compiler)
     implementation(libs.android.work)
     implementation(libs.android.work.ktx)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation(libs.kotlin.serialization.json)
+    implementation(libs.apache.commons)
 
     implementation(libs.hilt.work)
     implementation(libs.hilt.android)
