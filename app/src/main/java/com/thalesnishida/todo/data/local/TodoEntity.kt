@@ -10,7 +10,7 @@ data class TodoEntity(
     val title: String,
     val description: String?,
     val isCompleted: Boolean,
-    val createdAt: Long
+    val createdAt: String
 )
 
 fun TodoEntity.toDomain() : Todo {

@@ -32,11 +32,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.thalesnishida.todo.extensions.navigateTo
+import com.thalesnishida.todo.R
 import com.thalesnishida.todo.navigation.TodoDetails
 import com.thalesnishida.todo.navigation.navigateToTodoDetailsScreen
 import com.thalesnishida.todo.presetention.components.TodoItem
@@ -59,14 +60,6 @@ fun TodoListScreen(
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
 
-                is TodoListSideEffect.NavigateToDetail -> {
-                    Toast.makeText(
-                        context,
-                        "Navegar para detalhes ${effect.todoId}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
                 is TodoListSideEffect.ScrollToTop -> {
                     Toast.makeText(context, "Rolando para o topo!", Toast.LENGTH_SHORT).show()
                 }
@@ -76,13 +69,13 @@ fun TodoListScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Minhas Tarefas") })
+            TopAppBar(title = { Text(stringResource(R.string.my_tasks)) })
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 showAddTodoDialog = true
             }) {
-                Icon(Icons.Default.Add, contentDescription = "Adicionar Tarefa")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_task))
             }
         }
     ) { paddingValues ->
@@ -103,7 +96,7 @@ fun TodoListScreen(
                 )
             } else if (uiState.isEmpty) {
                 Text(
-                    text = "Nenhuma tarefa encontrada. Adicione uma!",
+                    text = stringResource(R.string.task_not_found),
                     modifier = Modifier.padding(16.dp)
                 )
             } else {
@@ -141,8 +134,8 @@ fun TodoListScreen(
     if (showAddTodoDialog) {
         AddTodoDialog(
             onDismiss = { showAddTodoDialog = false },
-            onAddTodo = { title ->
-                viewModel.processIntent(TodoListIntent.AddTodo(title))
+            onAddTodo = { title, description ->
+                viewModel.processIntent(TodoListIntent.AddTodo(title, description))
                 showAddTodoDialog = false
             }
         )
@@ -151,34 +144,45 @@ fun TodoListScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTodoDialog(onDismiss: () -> Unit, onAddTodo: (String) -> Unit) {
+fun AddTodoDialog(onDismiss: () -> Unit, onAddTodo: (String, String) -> Unit) {
     var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Adicionar Nova Tarefa") },
+        title = { Text(stringResource(R.string.add_new_task)) },
         text = {
-            OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
-                label = { Text("Título da Tarefa") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Column {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text(stringResource(R.string.task_title)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text(stringResource(R.string.description_task)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         },
         confirmButton = {
             Button(
                 onClick = {
                     if (title.isNotBlank()) {
-                        onAddTodo(title)
+                        onAddTodo(title, description)
                     }
                 }
             ) {
-                Text("Adicionar")
+                Text(stringResource(R.string.add))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancelar")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

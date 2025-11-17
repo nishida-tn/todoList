@@ -77,7 +77,7 @@ fun TodoItemPreview() {
             title = "Comprar leite",
             description = "Ir ao supermercado e comprar leite",
             isCompleted = true,
-            createdAt = System.currentTimeMillis()
+            createdAt = "2024-06-01T10:00:00Z"
         ),
         onToggleStatus = { _, _ -> },
         onDelete = { _ -> },

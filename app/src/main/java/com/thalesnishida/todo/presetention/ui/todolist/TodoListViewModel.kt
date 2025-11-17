@@ -34,11 +34,16 @@ class TodoListViewModel @Inject constructor(
     init {
         processIntent(TodoListIntent.LoadTodos)
     }
+
     fun processIntent(intent: TodoListIntent) {
         viewModelScope.launch {
             when (intent) {
                 is TodoListIntent.LoadTodos -> loadTodos()
-                is TodoListIntent.AddTodo -> addTodo(title = intent.title)
+                is TodoListIntent.AddTodo -> addTodo(
+                    title = intent.title,
+                    description = intent.description
+                )
+
                 is TodoListIntent.ToggleTodoStatus -> toggleTodoStatus(
                     intent.todoId,
                     intent.isCompleted
@@ -70,11 +75,11 @@ class TodoListViewModel @Inject constructor(
         }
     }
 
-    private fun addTodo(title: String) {
+    private fun addTodo(title: String, description: String? = null) {
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             try {
-                addTodoUseCase(title)
+                addTodoUseCase(title, description)
                 processIntent(TodoListIntent.LoadTodos)
             } catch (e: Exception) {
                 _uiState.update {
