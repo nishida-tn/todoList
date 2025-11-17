@@ -8,5 +8,5 @@ data class Todo(
     val title: String,
     val description: String?,
     val isCompleted: Boolean,
-    val createdAt: Long,
+    val createdAt: String,
 )
