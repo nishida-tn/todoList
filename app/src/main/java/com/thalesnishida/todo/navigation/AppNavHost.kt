@@ -8,8 +8,8 @@ import androidx.navigation.compose.NavHost
 fun AppNavHost(
     navController: NavHostController
 ) {
-    NavHost(navController = navController, startDestination = Todo) {
-        todoScreen(navController)
+    NavHost(navController = navController, startDestination = Home) {
+        homeScreen(navController)
         todoDetailsScreen(navController)
     }
 }

@@ -1,8 +1,8 @@
-package com.thalesnishida.todo.presetention.ui.todolist
+package com.thalesnishida.todo.presetention.ui.home
 
 import com.thalesnishida.todo.domain.model.Todo
 
-data class TodoListState(
+data class HomeState(
     val todos: List<Todo> = emptyList(),
     val isLoading: Boolean = false,
     val isAddingTodo: Boolean = false,

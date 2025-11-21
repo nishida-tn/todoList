@@ -8,5 +8,6 @@ data class Todo(
     val title: String,
     val description: String?,
     val isCompleted: Boolean,
+    val timestamp: Long?,
     val createdAt: String,
 )

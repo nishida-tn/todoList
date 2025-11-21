@@ -1,12 +1,16 @@
-package com.thalesnishida.todo.presetention.ui.todolist
+package com.thalesnishida.todo.presetention.ui.home
 
+import android.content.Context
+import java.util.Calendar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thalesnishida.todo.domain.usecase.AddTodoUseCase
 import com.thalesnishida.todo.domain.usecase.DeleteTodoUseCase
 import com.thalesnishida.todo.domain.usecase.GetTodosUseCase
 import com.thalesnishida.todo.domain.usecase.UpdateTodoStatusUseCase
+import com.thalesnishida.todo.utils.AlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,40 +20,47 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @HiltViewModel
-class TodoListViewModel @Inject constructor(
+class HomeViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val getTodosUseCase: GetTodosUseCase,
     private val addTodoUseCase: AddTodoUseCase,
     private val updateTodoStatusUseCase: UpdateTodoStatusUseCase,
     private val deleteTodoUseCase: DeleteTodoUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(TodoListState())
-    val uiState: StateFlow<TodoListState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(HomeState())
+    val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
-    private val _sideEffects = MutableSharedFlow<TodoListSideEffect>()
-    val sideEffect: SharedFlow<TodoListSideEffect> = _sideEffects.asSharedFlow()
+    private val _sideEffects = MutableSharedFlow<HomeSideEffect>()
+    val sideEffect: SharedFlow<HomeSideEffect> = _sideEffects.asSharedFlow()
+
+    val alarmScheduler = AlarmScheduler(context)
+
 
     init {
-        processIntent(TodoListIntent.LoadTodos)
+        processIntent(HomeIntent.LoadTodos)
     }
 
-    fun processIntent(intent: TodoListIntent) {
+    fun processIntent(intent: HomeIntent) {
         viewModelScope.launch {
             when (intent) {
-                is TodoListIntent.LoadTodos -> loadTodos()
-                is TodoListIntent.AddTodo -> addTodo(
+                is HomeIntent.LoadTodos -> loadTodos()
+                is HomeIntent.AddTodo -> addTodo(
                     title = intent.title,
-                    description = intent.description
+                    description = intent.description,
+                    timestamp = intent.timestamp
                 )
 
-                is TodoListIntent.ToggleTodoStatus -> toggleTodoStatus(
+                is HomeIntent.ToggleTodoStatus -> toggleTodoStatus(
                     intent.todoId,
                     intent.isCompleted
                 )
 
-                is TodoListIntent.DeleteTodo -> deleteTodo(intent.todoId)
+                is HomeIntent.DeleteTodo -> deleteTodo(intent.todoId)
             }
         }
     }
@@ -69,25 +80,37 @@ class TodoListViewModel @Inject constructor(
                     )
                 }
                 _sideEffects.emit(
-                    TodoListSideEffect.ShowToast("Falha ao carregar tarefas: ${e.localizedMessage}")
+                    HomeSideEffect.ShowToast("Falha ao carregar tarefas: ${e.localizedMessage}")
                 )
             }
         }
     }
 
-    private fun addTodo(title: String, description: String? = null) {
+    private fun addTodo(title: String, description: String? = null, timestamp: Long? = null) {
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             try {
-                addTodoUseCase(title, description)
-                processIntent(TodoListIntent.LoadTodos)
+                addTodoUseCase(title, description, timestamp)
+                timestamp?.let {
+                    val alarmId = timestamp.toInt()
+
+                    alarmScheduler.scheduleAlarm(
+                        todoId = alarmId,
+                        title = title,
+                        description = description ?: "",
+                        timestamp = timestamp
+                    )
+
+                    HomeSideEffect.ShowToast("Lembrete agendado!")
+                }
+                processIntent(HomeIntent.LoadTodos)
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
                         error = e.localizedMessage ?: "Erro ao adicionar a tarefa"
                     )
                 }
-                _sideEffects.emit(TodoListSideEffect.ShowToast("Falha ao adicionar tarefa: ${e.localizedMessage}"))
+                _sideEffects.emit(HomeSideEffect.ShowToast("Falha ao adicionar tarefa: ${e.localizedMessage}"))
             }
         }
     }
@@ -105,8 +128,8 @@ class TodoListViewModel @Inject constructor(
             try {
                 updateTodoStatusUseCase(todoId, isCompleted)
             } catch (e: Exception) {
-                processIntent(TodoListIntent.LoadTodos)
-                _sideEffects.emit(TodoListSideEffect.ShowToast("Falha ao atualizar status: ${e.localizedMessage}"))
+                processIntent(HomeIntent.LoadTodos)
+                _sideEffects.emit(HomeSideEffect.ShowToast("Falha ao atualizar status: ${e.localizedMessage}"))
             }
         }
     }
@@ -121,8 +144,10 @@ class TodoListViewModel @Inject constructor(
                 deleteTodoUseCase(todoId)
             } catch (e: Exception) {
                 _uiState.update { it.copy(todos = originalTodos, error = e.localizedMessage) }
-                _sideEffects.emit(TodoListSideEffect.ShowToast("Falha ao deletar tarefa: ${e.localizedMessage}"))
+                _sideEffects.emit(HomeSideEffect.ShowToast("Falha ao deletar tarefa: ${e.localizedMessage}"))
             }
         }
     }
+
+
 }

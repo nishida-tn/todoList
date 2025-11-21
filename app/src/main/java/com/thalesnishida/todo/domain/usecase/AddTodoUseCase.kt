@@ -10,13 +10,14 @@ import javax.inject.Inject
 class AddTodoUseCase @Inject constructor(
     private val todoRepository: TodoRepository
 ) {
-    suspend operator fun invoke(title: String, description: String? = null) {
+    suspend operator fun invoke(title: String, description: String? = null, scheduler: Long? = null) {
         val newTodo = Todo(
             id = UUID.randomUUID().toString(),
             title = title,
             description = description,
             isCompleted = false,
-            createdAt = LocalDateTime.now().toFormatterString()
+            createdAt = LocalDateTime.now().toFormatterString(),
+            timestamp = scheduler
         )
         todoRepository.addTodo(newTodo)
     }

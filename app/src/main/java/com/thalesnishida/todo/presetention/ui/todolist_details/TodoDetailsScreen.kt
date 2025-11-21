@@ -27,7 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.thalesnishida.todo.R
 import com.thalesnishida.todo.navigation.TodoDetails
-import com.thalesnishida.todo.navigation.navigateToTodoScreen
+import com.thalesnishida.todo.navigation.navigateToHomeScreen
 import com.thalesnishida.todo.presetention.components.TextFieldDefault
 
 @Composable
@@ -48,7 +48,7 @@ fun TodoDetailsScreen(
 
         viewModel.sideEffects.collect { effect ->
             when (effect) {
-                is TodoListDetailsSideEffect.NavigateToHome -> navController.navigateToTodoScreen()
+                is TodoListDetailsSideEffect.NavigateToHome -> navController.navigateToHomeScreen()
                 is TodoListDetailsSideEffect.ShowToast -> {
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
@@ -97,7 +97,7 @@ fun TodoDetailsScreen(
         ) {
             Button(
                 onClick = {
-                    navController.navigateToTodoScreen()
+                    navController.navigateToHomeScreen()
                 }
             ) {
                 Text(stringResource(R.string.back))

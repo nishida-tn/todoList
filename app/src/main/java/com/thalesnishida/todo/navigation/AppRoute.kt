@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 abstract class Route {
     fun navigate(navController: NavController) {
         when (this) {
-            Todo -> navController.navigateToTodoScreen()
+            Home -> navController.navigateToHomeScreen()
             is TodoDetails -> navController.navigateToTodoDetailsScreen(this)
             None -> Log.e("Routes", "trying to navigate to empty Route")
         }
@@ -19,7 +19,7 @@ abstract class Route {
 data object None : Route()
 
 @Serializable
-data object Todo : Route()
+data object Home : Route()
 
 @Serializable
 data class TodoDetails(

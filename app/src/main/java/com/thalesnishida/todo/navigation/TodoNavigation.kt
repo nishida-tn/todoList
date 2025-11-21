@@ -4,14 +4,14 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.thalesnishida.todo.extensions.navigateTo
-import com.thalesnishida.todo.presetention.ui.todolist.TodoListScreen
+import com.thalesnishida.todo.presetention.ui.home.HomeScreen
 
-fun NavGraphBuilder.todoScreen(navController: NavController) {
-    composable<Todo> {
-        TodoListScreen(navController = navController)
+fun NavGraphBuilder.homeScreen(navController: NavController) {
+    composable<Home> {
+        HomeScreen(navController = navController)
     }
 }
 
-fun NavController.navigateToTodoScreen() {
-    navigateTo(Todo)
+fun NavController.navigateToHomeScreen() {
+    navigateTo(Home)
 }

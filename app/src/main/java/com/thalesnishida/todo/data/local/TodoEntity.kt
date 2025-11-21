@@ -10,7 +10,8 @@ data class TodoEntity(
     val title: String,
     val description: String?,
     val isCompleted: Boolean,
-    val createdAt: String
+    val createdAt: String,
+    val scheduler: Long?
 )
 
 fun TodoEntity.toDomain() : Todo {
@@ -19,7 +20,8 @@ fun TodoEntity.toDomain() : Todo {
         title = this.title,
         description = this.description,
         isCompleted = this.isCompleted,
-        createdAt = this.createdAt
+        createdAt = this.createdAt,
+        timestamp = this.scheduler
     )
 }
 
@@ -29,6 +31,7 @@ fun Todo.toEntity() : TodoEntity {
         title = this.title,
         description = this.description,
         isCompleted = this.isCompleted,
-        createdAt = this.createdAt
+        createdAt = this.createdAt,
+        scheduler = this.timestamp
     )
 }
