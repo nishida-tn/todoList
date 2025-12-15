@@ -24,15 +24,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.thalesnishida.todo.R
 import com.thalesnishida.todo.navigation.TodoDetails
-import com.thalesnishida.todo.navigation.navigateToHomeScreen
 import com.thalesnishida.todo.presetention.components.TextFieldDefault
 
 @Composable
 fun TodoDetailsScreen(
-    navController: NavController,
+    onNavigateToHomeScreen: () -> Unit,
     todoDetails: TodoDetails,
     viewModel: TodoListDetailsViewModel = hiltViewModel()
 ) {
@@ -48,7 +46,7 @@ fun TodoDetailsScreen(
 
         viewModel.sideEffects.collect { effect ->
             when (effect) {
-                is TodoListDetailsSideEffect.NavigateToHome -> navController.navigateToHomeScreen()
+                is TodoListDetailsSideEffect.NavigateToHome -> onNavigateToHomeScreen
                 is TodoListDetailsSideEffect.ShowToast -> {
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
@@ -97,7 +95,7 @@ fun TodoDetailsScreen(
         ) {
             Button(
                 onClick = {
-                    navController.navigateToHomeScreen()
+                    onNavigateToHomeScreen
                 }
             ) {
                 Text(stringResource(R.string.back))

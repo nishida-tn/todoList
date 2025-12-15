@@ -1,9 +1,10 @@
 package com.thalesnishida.todo.presetention.ui.home
 
 import android.content.Context
-import java.util.Calendar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thalesnishida.todo.domain.model.Todo
 import com.thalesnishida.todo.domain.usecase.AddTodoUseCase
 import com.thalesnishida.todo.domain.usecase.DeleteTodoUseCase
 import com.thalesnishida.todo.domain.usecase.GetTodosUseCase
@@ -20,8 +21,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.Calendar
+import java.util.TimeZone
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -45,6 +46,7 @@ class HomeViewModel @Inject constructor(
         processIntent(HomeIntent.LoadTodos)
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     fun processIntent(intent: HomeIntent) {
         viewModelScope.launch {
             when (intent) {
@@ -52,7 +54,11 @@ class HomeViewModel @Inject constructor(
                 is HomeIntent.AddTodo -> addTodo(
                     title = intent.title,
                     description = intent.description,
-                    timestamp = intent.timestamp
+                    timestamp = intent.timestamp,
+                    category = intent.category,
+                    priority = intent.priority,
+                    categoryBackgroundColor = intent.categoryBackgroundColor,
+                    categoryColor = intent.categoryColor
                 )
 
                 is HomeIntent.ToggleTodoStatus -> toggleTodoStatus(
@@ -61,7 +67,34 @@ class HomeViewModel @Inject constructor(
                 )
 
                 is HomeIntent.DeleteTodo -> deleteTodo(intent.todoId)
+                is HomeIntent.UpdateDraftTime -> calculateTimestamp(
+                    intent.dateMillis,
+                    intent.hour,
+                    intent.minute
+                )
+
+                is HomeIntent.ClearDraftTime -> _uiState.update { it.copy(draftScheduledTimestamp = null) }
             }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    private fun calculateTimestamp(dateMillis: Long, hour: Int, minute: Int) {
+        val utcCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        utcCalendar.timeInMillis = dateMillis
+
+        val year = utcCalendar.get(Calendar.YEAR)
+        val month = utcCalendar.get(Calendar.MONTH)
+        val day = utcCalendar.get(Calendar.DAY_OF_MONTH)
+
+        val localCalendar = Calendar.getInstance()
+        localCalendar.set(year, month, day, hour, minute, 0)
+        localCalendar.set(Calendar.MILLISECOND, 0)
+
+        val finalTimestamp = localCalendar.timeInMillis
+
+        _uiState.update {
+            it.copy(draftScheduledTimestamp = finalTimestamp)
         }
     }
 
@@ -86,11 +119,31 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun addTodo(title: String, description: String? = null, timestamp: Long? = null) {
+    private fun groupTodosByDate(todos: List<Todo>) {
+        // Implementation can be added here if needed
+    }
+
+    private fun addTodo(
+        title: String,
+        description: String? = "",
+        timestamp: Long? = null,
+        category: String? = null,
+        priority: Int? = null,
+        categoryBackgroundColor: Int? = null,
+        categoryColor: Int? = null
+    ) {
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             try {
-                addTodoUseCase(title, description, timestamp)
+                addTodoUseCase(
+                    title,
+                    description,
+                    timestamp,
+                    category,
+                    priority,
+                    categoryBackgroundColor,
+                    categoryColor
+                )
                 timestamp?.let {
                     val alarmId = timestamp.toInt()
 
@@ -117,7 +170,6 @@ class HomeViewModel @Inject constructor(
 
     private fun toggleTodoStatus(todoId: String, isCompleted: Boolean) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
             _uiState.update { currentState ->
                 currentState.copy(
                     todos = currentState.todos.map { todo ->

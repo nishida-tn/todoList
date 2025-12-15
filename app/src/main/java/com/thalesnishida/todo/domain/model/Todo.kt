@@ -8,6 +8,11 @@ data class Todo(
     val title: String,
     val description: String?,
     val isCompleted: Boolean,
-    val timestamp: Long?,
+    val scheduler: Long?,
     val createdAt: String,
+    val priority: Int?,
+    val category: String?,
+    val categoryBackgroundColor: Int?,
+    val categoryColor: Int?,
+    val categoryIcon: String?
 )

@@ -11,27 +11,42 @@ data class TodoEntity(
     val description: String?,
     val isCompleted: Boolean,
     val createdAt: String,
-    val scheduler: Long?
+    val scheduler: Long?,
+    val priority: Int?,
+    val category: String?,
+    val categoryBackgroundColor: Int?,
+    val categoryColor: Int?,
+    val categoryIcon: String?
 )
 
-fun TodoEntity.toDomain() : Todo {
+fun TodoEntity.toDomain(): Todo {
     return Todo(
         id = this.id,
         title = this.title,
         description = this.description,
         isCompleted = this.isCompleted,
         createdAt = this.createdAt,
-        timestamp = this.scheduler
+        scheduler = this.scheduler,
+        priority = this.priority,
+        category = this.category,
+        categoryBackgroundColor = this.categoryBackgroundColor,
+        categoryColor = this.categoryColor,
+        categoryIcon = this.categoryIcon
     )
 }
 
-fun Todo.toEntity() : TodoEntity {
+fun Todo.toEntity(): TodoEntity {
     return TodoEntity(
         id = this.id,
         title = this.title,
         description = this.description,
         isCompleted = this.isCompleted,
         createdAt = this.createdAt,
-        scheduler = this.timestamp
+        scheduler = this.scheduler,
+        priority = this.priority,
+        category = this.category,
+        categoryBackgroundColor = this.categoryBackgroundColor,
+        categoryColor = this.categoryColor,
+        categoryIcon = this.categoryIcon
     )
 }

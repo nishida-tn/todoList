@@ -1,4 +1,4 @@
-package com.thalesnishida.todo.presetention.components
+package com.thalesnishida.todo.presetention.ui.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,21 +10,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.thalesnishida.todo.R
 import com.thalesnishida.todo.domain.model.Todo
+import com.thalesnishida.todo.presetention.components.Category
+import com.thalesnishida.todo.presetention.components.Priority
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -39,7 +40,9 @@ fun TodoItem(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Gray)
+            .clip(RoundedCornerShape(4.dp))
+            .background(colorResource(R.color.light_gray))
+            .padding(10.dp)
     ) {
         Row(
             modifier = Modifier
@@ -49,42 +52,51 @@ fun TodoItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = todo.isCompleted,
-                    onClick = { onToggleStatus(todo.id, !todo.isCompleted) }
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    Text(text = todo.title, style = MaterialTheme.typography.bodyLarge)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        todo.timestamp?.let {
-                            val schedule = formatTimestamp(it)
-                            Text("Agendado para: $schedule")
-                        }
-                        Row {
+            RadioButton(
+                selected = todo.isCompleted,
+                onClick = { onToggleStatus(todo.id, !todo.isCompleted) }
+            )
 
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Column {
+                Row {
+                    Text(
+                        color = Color.White,
+                        text = todo.title,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    todo.scheduler?.let {
+                        val schedule = formatTimestamp(it)
+                        Text(
+                            color = Color.Gray,
+                            text = "Agendado para: $schedule"
+                        )
+                    } ?: Text("Sem agendamento", color = Color.Gray)
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        todo.category?.let {
+                            Category(it)
+                        }
+
+                        todo.priority?.let {
+                            Priority(it)
                         }
                     }
                 }
+
             }
 
-            IconButton(onClick = { onDelete(todo.id) }) {
-                Icon(Icons.Default.Delete, contentDescription = "Excluir")
-            }
-        }
-
-        if (todo.isCompleted) {
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.primary,
-                thickness = 2.dp,
-                modifier = Modifier
-                    .padding(start = 52.dp, end = 48.dp)
-                    .align(Alignment.Center)
-            )
         }
     }
 
@@ -100,7 +112,12 @@ fun TodoItemPreview() {
             description = "Ir ao supermercado e comprar leite",
             isCompleted = true,
             createdAt = "2024-06-01T10:00:00Z",
-            timestamp = null
+            scheduler = null,
+            priority = 1,
+            category = null,
+            categoryBackgroundColor = null,
+            categoryColor = null,
+            categoryIcon = null,
         ),
         onToggleStatus = { _, _ -> },
         onDelete = { _ -> },
@@ -108,7 +125,7 @@ fun TodoItemPreview() {
     )
 }
 
-private fun formatTimestamp(timestamp: Long) : String {
+private fun formatTimestamp(timestamp: Long): String {
     val now = Calendar.getInstance()
     val taskDate = Calendar.getInstance().apply { timeInMillis = timestamp }
 
@@ -116,9 +133,11 @@ private fun formatTimestamp(timestamp: Long) : String {
     val timeString = timeFormatter.format(taskDate.time)
 
     val isSameYear = now.get(Calendar.YEAR) == taskDate.get(Calendar.YEAR)
-    val isSameDay = isSameYear && now.get(Calendar.DAY_OF_YEAR) == taskDate.get(Calendar.DAY_OF_YEAR)
+    val isSameDay =
+        isSameYear && now.get(Calendar.DAY_OF_YEAR) == taskDate.get(Calendar.DAY_OF_YEAR)
 
-    val isTomorrow = isSameYear && now.get(Calendar.DAY_OF_YEAR) + 1 == taskDate.get(Calendar.DAY_OF_YEAR)
+    val isTomorrow =
+        isSameYear && now.get(Calendar.DAY_OF_YEAR) + 1 == taskDate.get(Calendar.DAY_OF_YEAR)
 
     return when {
         isSameDay -> "Hoje as $timeString"

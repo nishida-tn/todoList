@@ -7,15 +7,11 @@ import androidx.navigation.toRoute
 import com.thalesnishida.todo.presetention.ui.todolist_details.TodoDetailsScreen
 
 fun NavGraphBuilder.todoDetailsScreen(navController: NavController) {
-    composable<TodoDetails> {
-        val todoDetails = it.toRoute<TodoDetails>()
+    composable<TodoDetails> { backStackEntry ->
+        val args = backStackEntry.toRoute<TodoDetails>()
         TodoDetailsScreen(
-            navController = navController,
-            todoDetails = todoDetails,
+            onNavigateToHomeScreen = { navController.navigate(Home)},
+            todoDetails = args,
         )
     }
-}
-
-fun NavController.navigateToTodoDetailsScreen(todoDetails: TodoDetails) {
-    navigate(todoDetails)
 }

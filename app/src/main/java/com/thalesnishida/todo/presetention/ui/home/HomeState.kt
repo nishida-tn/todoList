@@ -8,6 +8,7 @@ data class HomeState(
     val isAddingTodo: Boolean = false,
     val error: String? = null,
     val showDialog: Boolean = false,
+    val draftScheduledTimestamp: Long? = null
 ) {
     val isEmpty: Boolean get() = todos.isEmpty()
 }

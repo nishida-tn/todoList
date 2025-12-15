@@ -11,5 +11,6 @@ fun AppNavHost(
     NavHost(navController = navController, startDestination = Home) {
         homeScreen(navController)
         todoDetailsScreen(navController)
+        createNewCategoryScreen(navController)
     }
 }

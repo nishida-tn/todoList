@@ -6,5 +6,17 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="flag_lime">#FFCCFF80</color>
+    <color name="flag_peach_pink">#FFFF9680</color>
+    <color name="flag_cyan">#FF80FFFF</color>
+    <color name="flag_mint">#FF80FFD9</color>
+    <color name="flag_periwinkle">#FF809CFF</color>
+    <color name="flag_pink">#FFFF80EB</color>
+    <color name="flag_magenta">#FFFC80FF</color>
+    <color name="flag_seafoam">#FF80FFA3</color>
+    <color name="flag_sky">#FF80D1FF</color>
+    <color name="flag_light_orange">#FFFFCC80</color>
+    <color name="flag_mint_light">#FF80FFD1</color>
+    <color name="gray_dark">#FF1D1D1D</color>
+    <color name="light_gray">#FF363636</color>
 </resources>
