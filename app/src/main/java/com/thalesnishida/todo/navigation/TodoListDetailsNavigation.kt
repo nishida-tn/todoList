@@ -8,10 +8,8 @@ import com.thalesnishida.todo.presetention.ui.todolist_details.TodoDetailsScreen
 
 fun NavGraphBuilder.todoDetailsScreen(navController: NavController) {
     composable<TodoDetails> { backStackEntry ->
-        val args = backStackEntry.toRoute<TodoDetails>()
         TodoDetailsScreen(
-            onNavigateToHomeScreen = { navController.navigate(Home)},
-            todoDetails = args,
+            onNavigateToHomeScreen = { navController.popBackStack()},
         )
     }
 }

@@ -11,4 +11,5 @@
     <string name="task_title">Título da Tarefa</string>
     <string name="add">Adicionar</string>
     <string name="cancel">Cancelar</string>
+    <string name="task_error_update">Erro ao tentar atualizar!</string>
 </resources>

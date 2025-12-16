@@ -7,10 +7,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -101,45 +99,48 @@ fun HomeScreen(
                 .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.padding(16.dp))
-            } else if (uiState.error != null) {
-                Text(
-                    text = "Erro: ${uiState.error}",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(16.dp)
-                )
-            } else if (uiState.isEmpty) {
-                Image(
-                    painter = painterResource(R.drawable.ic_checklist),
-                    contentDescription = null,
-                )
-                Text(
-                    text = stringResource(R.string.task_not_found),
-                    modifier = Modifier.padding(16.dp)
-                )
-            } else {
-                LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                    items(uiState.todos, key = { it.id }) { todo ->
-                        TodoItem(
-                            todo = todo,
-                            onToggleStatus = { id, isCompleted ->
-                                viewModel.processIntent(
-                                    HomeIntent.ToggleTodoStatus(
-                                        id,
-                                        isCompleted
-                                    )
-                                )
-                            },
-                            onDelete = { id ->
-                                viewModel.processIntent(HomeIntent.DeleteTodo(id))
-                            },
-                            onClick = {
-                                onNavigateToDetails(todo.id)
-                            }
+            when (val dataState = uiState.listTodoState) {
+                is ListTodoState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                }
 
+                is ListTodoState.Error -> {
+                    Text(
+                        text = "Erro: ${dataState.message}",
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+
+                is ListTodoState.Success -> {
+                    if (dataState.todos.isEmpty()) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_checklist),
+                            contentDescription = null,
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = stringResource(R.string.task_not_found),
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    } else {
+                        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                            items(dataState.todos, key = { it.id }) { todo ->
+                                TodoItem(
+                                    todo = todo,
+                                    onToggleStatus = { id, isCompleted ->
+                                        viewModel.processIntent(
+                                            HomeIntent.ToggleTodoStatus(
+                                                id,
+                                                isCompleted
+                                            )
+                                        )
+                                    },
+                                    onClick = {
+                                        onNavigateToDetails(todo.id)
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }

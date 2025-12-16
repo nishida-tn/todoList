@@ -8,5 +8,6 @@ interface TodoRepository {
     suspend fun addTodo(todo: Todo)
     suspend fun updateTodo(todo: Todo)
     suspend fun deleteTodo(todoId: String)
-    suspend fun getTodoById(todoId: String): Todo?
+    fun getTodoById(todoId: String): Flow<Todo?>
+    suspend fun getTodoSnapshot(todoId: String): Todo?
 }

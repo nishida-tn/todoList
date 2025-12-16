@@ -7,7 +7,7 @@ class UpdateTodoStatusUseCase @Inject constructor(
     private val todoRepository: TodoRepository
 ) {
     suspend operator fun invoke(todoId: String, isCompleted: Boolean) {
-        val existingTodo = todoRepository.getTodoById(todoId)
+        val existingTodo = todoRepository.getTodoSnapshot(todoId)
             ?: throw IllegalArgumentException("Todo with id $todoId not found")
 
         val updatedTodo = existingTodo.copy(isCompleted = isCompleted)

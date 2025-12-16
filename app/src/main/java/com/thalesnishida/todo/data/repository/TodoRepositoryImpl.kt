@@ -5,8 +5,10 @@ import com.thalesnishida.todo.data.local.toDomain
 import com.thalesnishida.todo.data.local.toEntity
 import com.thalesnishida.todo.domain.model.Todo
 import com.thalesnishida.todo.domain.repository.TodoRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,11 +30,17 @@ class TodoRepositoryImpl @Inject constructor(
         todoDao.updateTodo(todo.toEntity())
     }
 
-    override suspend fun deleteTodo(todoId: String) {
+    override suspend fun deleteTodo(todoId: String) = withContext(Dispatchers.IO) {
         todoDao.deleteTodoById(todoId)
     }
 
-    override suspend fun getTodoById(todoId: String): Todo? {
-        return todoDao.getTodoById(todoId)?.toDomain()
+    override fun getTodoById(todoId: String): Flow<Todo?> {
+        return todoDao.getTodoById(todoId).map { entity ->
+            entity?.toDomain()
+        }
+    }
+
+    override suspend fun getTodoSnapshot(todoId: String): Todo? = withContext(Dispatchers.IO) {
+        todoDao.fetchTodoSnapshot(todoId)?.toDomain()
     }
 }

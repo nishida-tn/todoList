@@ -6,6 +6,6 @@ import javax.inject.Inject
 class GetTodoByIdUseCase @Inject constructor(
     private val todoRepository: TodoRepository
 ) {
-    suspend operator fun invoke(todoId: String) =
+    operator fun invoke(todoId: String) =
         todoRepository.getTodoById(todoId)
 }

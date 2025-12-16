@@ -14,7 +14,7 @@ interface TodoDao {
     fun getTodos(): Flow<List<TodoEntity>>
 
     @Query("SELECT * FROM todos WHERE id = :todoId")
-    suspend fun getTodoById(todoId: String): TodoEntity?
+    fun getTodoById(todoId: String): Flow<TodoEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTodo(todo: TodoEntity)
@@ -24,4 +24,7 @@ interface TodoDao {
 
     @Query("DELETE FROM todos WHERE id = :todoId")
     suspend fun deleteTodoById(todoId: String)
+
+    @Query("SELECT * FROM todos WHERE id = :todoId")
+    suspend fun fetchTodoSnapshot(todoId: String): TodoEntity?
 }

@@ -1,4 +1,18 @@
 package com.thalesnishida.todo.di
 
-class AppModule {
+import com.thalesnishida.todo.core.provider.StringProvider
+import com.thalesnishida.todo.core.provider.StringProviderImpl
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class AppModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindStringProvider(impl: StringProviderImpl): StringProvider
 }

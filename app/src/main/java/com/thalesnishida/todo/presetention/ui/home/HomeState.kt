@@ -3,12 +3,14 @@ package com.thalesnishida.todo.presetention.ui.home
 import com.thalesnishida.todo.domain.model.Todo
 
 data class HomeState(
-    val todos: List<Todo> = emptyList(),
-    val isLoading: Boolean = false,
     val isAddingTodo: Boolean = false,
-    val error: String? = null,
     val showDialog: Boolean = false,
-    val draftScheduledTimestamp: Long? = null
-) {
-    val isEmpty: Boolean get() = todos.isEmpty()
+    val draftScheduledTimestamp: Long? = null,
+    val listTodoState: ListTodoState = ListTodoState.Loading
+)
+
+sealed interface ListTodoState {
+    data object Loading: ListTodoState
+    data class Success(val todos: List<Todo>): ListTodoState
+    data class Error(val message: String): ListTodoState
 }

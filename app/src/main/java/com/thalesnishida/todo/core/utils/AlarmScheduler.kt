@@ -1,4 +1,4 @@
-package com.thalesnishida.todo.utils
+package com.thalesnishida.todo.core.utils
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
