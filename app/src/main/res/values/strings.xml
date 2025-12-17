@@ -5,10 +5,11 @@
     <string name="task_success_update">Tarefa atualizada com sucesso</string>
     <string name="task_not_found">Nenhuma tarefa encontrada. Adicione uma!</string>
     <string name="add_task">Adicionar Tarefa</string>
-    <string name="my_tasks">Minhas Tarefas</string>
+    <string name="my_tasks">My Tasks</string>
     <string name="add_new_task">Adicionar Nova Tarefa</string>
     <string name="description_task">Descrição da tarefa</string>
     <string name="task_title">Título da Tarefa</string>
+    <string name="task_description">Descriptions Task</string>
     <string name="add">Adicionar</string>
     <string name="cancel">Cancelar</string>
     <string name="task_error_update">Erro ao tentar atualizar!</string>

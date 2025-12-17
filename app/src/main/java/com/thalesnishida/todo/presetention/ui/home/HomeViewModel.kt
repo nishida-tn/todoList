@@ -4,12 +4,13 @@ import android.content.Context
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thalesnishida.todo.core.utils.AlarmScheduler
 import com.thalesnishida.todo.domain.model.Todo
 import com.thalesnishida.todo.domain.usecase.AddTodoUseCase
 import com.thalesnishida.todo.domain.usecase.DeleteTodoUseCase
 import com.thalesnishida.todo.domain.usecase.GetTodosUseCase
 import com.thalesnishida.todo.domain.usecase.UpdateTodoStatusUseCase
-import com.thalesnishida.todo.core.utils.AlarmScheduler
+import com.thalesnishida.todo.domain.usecase.UpdateTodoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
@@ -32,15 +33,19 @@ class HomeViewModel @Inject constructor(
     getTodosUseCase: GetTodosUseCase,
     private val addTodoUseCase: AddTodoUseCase,
     private val updateTodoStatusUseCase: UpdateTodoStatusUseCase,
+    private val updateTodoUseCase: UpdateTodoUseCase,
     private val deleteTodoUseCase: DeleteTodoUseCase
 ) : ViewModel() {
     private val _draftScheduledTimestamp = MutableStateFlow<Long?>(null)
+    private val _activeDialog = MutableStateFlow<HomeDialogState>(HomeDialogState.None)
     val uiState: StateFlow<HomeState> = combine(
         getTodosUseCase(),
-        _draftScheduledTimestamp
-    ) { todo, draftTIme ->
+        _draftScheduledTimestamp,
+        _activeDialog
+    ) { todo, draftTIme, dialogState ->
         HomeState(
             draftScheduledTimestamp = draftTIme,
+            activeDialog = dialogState,
             listTodoState = if (todo.isEmpty()) {
                 ListTodoState.Success(emptyList())
             } else {
@@ -91,6 +96,8 @@ class HomeViewModel @Inject constructor(
                 )
 
                 is HomeIntent.ClearDraftTime -> _draftScheduledTimestamp.value = null
+
+                is HomeIntent.UpdateTodo -> updateTodo(intent.id, intent.title, intent.description)
             }
         }
     }
@@ -114,7 +121,37 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun groupTodosByDate(todos: List<Todo>) {
-        // Implementation can be added here if needed
+
+    }
+
+    fun openDialog(todoId: String) {
+        _activeDialog.value = HomeDialogState.DetailTodo(todoId)
+    }
+
+    fun onAddTodoClick() {
+        _activeDialog.value =  HomeDialogState.AddTodoDialog
+    }
+    fun closeDialog() {
+        _activeDialog.value = HomeDialogState.None
+    }
+
+    private fun updateTodo(id: String, title: String, description: String) {
+        viewModelScope.launch {
+            try {
+                updateTodoUseCase(
+                    todoId = id,
+                    title = title,
+                    description = description,
+                )
+
+                _activeDialog.value = HomeDialogState.None
+
+                _sideEffects.emit(HomeSideEffect.ShowToast("Tarefa atualizada com sucesso!"))
+
+            } catch (e: Exception) {
+                _sideEffects.emit(HomeSideEffect.ShowToast("Erro ao salvar: ${e.localizedMessage}"))
+            }
+        }
     }
 
     private suspend fun addTodo(

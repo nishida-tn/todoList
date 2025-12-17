@@ -60,7 +60,7 @@ fun TodoItem(
             ) {
                 Text(
                     text = todo.title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textDecoration = if (todo.isCompleted) TextDecoration.LineThrough else null
                 )

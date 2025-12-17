@@ -14,5 +14,9 @@ sealed class HomeIntent {
     data class ToggleTodoStatus(val todoId: String, val isCompleted: Boolean) : HomeIntent()
     data class DeleteTodo(val todoId: String) : HomeIntent()
     data class UpdateDraftTime(val dateMillis: Long, val hour: Int, val minute: Int) : HomeIntent()
+
+    data class UpdateTodo(val id: String, val title: String, val description: String) :
+        HomeIntent()
+
     data object ClearDraftTime : HomeIntent()
 }

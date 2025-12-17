@@ -38,6 +38,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thalesnishida.todo.R
 import com.thalesnishida.todo.presetention.ui.home.components.AddTodoDialog
+import com.thalesnishida.todo.presetention.ui.home.components.HomeDialogManager
 import com.thalesnishida.todo.presetention.ui.home.components.TodoItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,7 +85,7 @@ fun HomeScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                showAddTodoDialog = true
+                viewModel.onAddTodoClick()
             }) {
                 Icon(
                     Icons.Default.Add,
@@ -136,7 +137,7 @@ fun HomeScreen(
                                         )
                                     },
                                     onClick = {
-                                        onNavigateToDetails(todo.id)
+                                        viewModel.openDialog(todo.id)
                                     }
                                 )
                             }
@@ -147,33 +148,33 @@ fun HomeScreen(
         }
     }
 
-    if (showAddTodoDialog) {
-        AddTodoDialog(
-            scheduledTimestamp = uiState.draftScheduledTimestamp,
-            onDismiss = { showAddTodoDialog = false },
-            onAddTodo = { title, description, _, category, priority ->
-                viewModel.processIntent(
-                    HomeIntent.AddTodo(
-                        title,
-                        description,
-                        uiState.draftScheduledTimestamp,
-                        category,
-                        priority
-                    )
+    val currentTodos = (uiState.listTodoState as? ListTodoState.Success)?.todos.orEmpty()
+
+    HomeDialogManager(
+        dialogState = uiState.activeDialog,
+        todos = currentTodos,
+        onDismiss = { viewModel.closeDialog() },
+        onSaveEdit = { id, title, desc ->
+            viewModel.processIntent(HomeIntent.UpdateTodo(id, title, desc))
+        },
+        onAddTodo = { title, description, _, category, priority ->
+            viewModel.processIntent(
+                HomeIntent.AddTodo(
+                    title,
+                    description,
+                    uiState.draftScheduledTimestamp,
+                    category,
+                    priority
                 )
-                showAddTodoDialog = false
-                viewModel.processIntent(HomeIntent.ClearDraftTime)
-            },
-            showCategoryChoose = showCategoryChoose,
-            onDateTimeConfirmed = { date, hour, minute ->
-                viewModel.processIntent(HomeIntent.UpdateDraftTime(date, hour, minute))
-            },
-            onNavigateToCreateCategory = { onNavigateToCreateCategory() },
-            onShowCategoryChooseChange = { showCategoryChoose = it },
-            onCategorySelected = {
-            },
-        )
-    }
+            )
+            viewModel.processIntent(HomeIntent.ClearDraftTime)
+        },
+        draftScheduledTimestamp = uiState.draftScheduledTimestamp,
+        onDateTimeConfirmed = { date, hour, minute ->
+            viewModel.processIntent(HomeIntent.UpdateDraftTime(date, hour, minute))
+        },
+    )
+
 }
 
 
