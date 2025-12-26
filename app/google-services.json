@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "296258525032",
+    "project_id": "test-auth-f44f7",
+    "storage_bucket": "test-auth-f44f7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:296258525032:android:efc8d198a86f97186768dd",
+        "android_client_info": {
+          "package_name": "com.thalesnishida.todo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh8zO5ChTR9LMNA5Ob08VsSXNSg6fvzm0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
