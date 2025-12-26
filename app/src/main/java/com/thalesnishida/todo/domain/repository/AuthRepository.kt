@@ -1,5 +1,6 @@
 package com.thalesnishida.todo.domain.repository
 
+import android.net.Uri
 import com.google.firebase.auth.AuthResult
 import com.thalesnishida.todo.core.Response
 import com.thalesnishida.todo.domain.model.User
@@ -12,4 +13,6 @@ interface AuthRepository {
     suspend fun signInWithEmailAndPassword(email: String, password: String): Flow<Response<AuthResult>>
 
     suspend fun isLoggedIn(): Boolean
+
+    suspend fun updateProfilePicture(image: Uri): Result<Unit>
 }

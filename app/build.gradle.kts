@@ -82,10 +82,11 @@ dependencies {
     implementation(libs.android.work.ktx)
     implementation(libs.kotlin.serialization.json)
     implementation(libs.apache.commons)
-
+    implementation(libs.coil.compose)
     implementation(libs.hilt.work)
     implementation(libs.hilt.android)
     implementation(libs.hilt.android.navigation)
+    implementation(libs.firebase.storage)
 
     kapt(libs.hilt.compiler)
     kapt(libs.hilt.android.compiler)
