@@ -3,6 +3,7 @@ package com.thalesnishida.todo.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.thalesnishida.todo.core.extensions.navigateTo
 import com.thalesnishida.todo.presetention.ui.new_category.CreateNewCategoryScreen
 
 fun NavGraphBuilder.createNewCategoryScreen(navController: NavController) {
@@ -24,4 +25,8 @@ fun NavGraphBuilder.createNewCategoryScreen(navController: NavController) {
             }
         )
     }
+}
+
+fun NavController.createNewCategoryScreen() {
+    navigateTo(CreateNewCategory)
 }
