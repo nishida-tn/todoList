@@ -1,4 +1,4 @@
-package com.thalesnishida.todo.presetention.ui.signIn
+package com.thalesnishida.todo.presetention.ui.register.signIn
 
 import com.thalesnishida.todo.presetention.ui.base.UiEvent
 import kotlinx.coroutines.flow.Flow

@@ -1,4 +1,4 @@
-package com.thalesnishida.todo.presetention.ui.singUp
+package com.thalesnishida.todo.presetention.ui.register.singUp
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +23,6 @@ import com.thalesnishida.todo.navigation.Route
 import com.thalesnishida.todo.navigation.SignIn
 import com.thalesnishida.todo.presetention.components.ButtonDefault
 import com.thalesnishida.todo.presetention.ui.base.UiEvent
-import com.thalesnishida.todo.presetention.ui.signIn.SignInIntent
 
 @Composable
 fun SignUpScreen(

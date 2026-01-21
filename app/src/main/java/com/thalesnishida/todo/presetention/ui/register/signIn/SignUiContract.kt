@@ -1,4 +1,4 @@
-package com.thalesnishida.todo.presetention.ui.signIn
+package com.thalesnishida.todo.presetention.ui.register.signIn
 
 data class SignInUiState(
     val email: String = "",

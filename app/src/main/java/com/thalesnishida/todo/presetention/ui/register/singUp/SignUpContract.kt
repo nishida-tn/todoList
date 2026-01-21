@@ -1,4 +1,4 @@
-package com.thalesnishida.todo.presetention.ui.singUp
+package com.thalesnishida.todo.presetention.ui.register.singUp
 
 data class SignUpUiState(
     val name: String = "",

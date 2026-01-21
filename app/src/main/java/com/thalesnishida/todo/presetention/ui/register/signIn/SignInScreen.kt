@@ -1,4 +1,4 @@
-package com.thalesnishida.todo.presetention.ui.signIn
+package com.thalesnishida.todo.presetention.ui.register.signIn
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +15,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thalesnishida.todo.navigation.Route
 import com.thalesnishida.todo.presetention.ui.base.UiEvent
@@ -75,4 +77,13 @@ fun SignInScreen(
             ) { Text("Sign In") }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SignInScreenPreview(){
+    SignInScreen(
+        onNavigate = {},
+        viewModel = hiltViewModel<SignInViewModelMock>()
+    )
 }

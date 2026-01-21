@@ -1,4 +1,4 @@
-package com.thalesnishida.todo.presetention.ui.singUp
+package com.thalesnishida.todo.presetention.ui.register.singUp
 
 import com.thalesnishida.todo.presetention.ui.base.UiEvent
 import kotlinx.coroutines.flow.Flow
